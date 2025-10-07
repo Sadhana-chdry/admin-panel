@@ -20,7 +20,10 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  IconButton,
 } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const BASE_URL = "https://superfone-admin.onrender.com";
 
@@ -34,9 +37,15 @@ const AdminDetails = () => {
     severity: "success",
   });
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [editAdmin, setEditAdmin] = useState({ name: "", email: "", role: "" });
+  const [editAdmin, setEditAdmin] = useState({
+    companyID:"",
+    name: "",
+    email: "",
+    password: "",
+    mobileNumber: "",
+    role: "",
+  });
 
-  // Snackbar helper
   const showSnackbar = (message, severity = "success") =>
     setSnackbar({ open: true, message, severity });
 
@@ -51,7 +60,7 @@ const AdminDetails = () => {
       });
       setAdmins(Array.isArray(res.data) ? res.data : [res.data]);
     } catch (err) {
-      console.error("Error fetching admins:", err);
+      console.error(err);
       showSnackbar("Failed to fetch admins", "error");
       setAdmins([]);
     } finally {
@@ -138,31 +147,20 @@ const AdminDetails = () => {
       </Typography>
 
       {/* Search */}
-      <Stack direction={{ xs: "column", sm: "row"}} spacing={2} mb={2}>
-        <TextField sx={{backgroundColor:"white" , color:'black'}}
+      <Stack direction={{ xs: "column", sm: "row" }} spacing={2} mb={2}>
+        <TextField sx={{backgroundColor:"white"}}
           label="Search by ID"
           size="small"
           value={searchId}
           onChange={(e) => setSearchId(e.target.value)}
           fullWidth
         />
-
-        <Button
-          variant="contained"
-          onClick={fetchAdminById}
-          sx={{ minWidth: "120px" }}
-        >
+        <Button variant="contained" onClick={fetchAdminById} sx={{ minWidth: 120 }}>
           Search
         </Button>
-
-        <Button
-          variant="contained"
-          onClick={fetchAdmins}
-          sx={{ minWidth: "120px" }}
-        >
+        <Button variant="contained" onClick={fetchAdmins} sx={{ minWidth: 120 }}>
           Show All
         </Button>
-
       </Stack>
 
       {/* Admin Table */}
@@ -176,43 +174,33 @@ const AdminDetails = () => {
             <Table>
               <TableHead>
                 <TableRow sx={{ backgroundColor: "#e3f2fd" }}>
-                  <TableCell sx={{textAlign:"center"}}>Company ID</TableCell>
-                  <TableCell sx={{textAlign:"center"}}>Name</TableCell>
-                  <TableCell sx={{textAlign:"center"}}>Email</TableCell>
-                  <TableCell sx={{textAlign:"center"}}>Password</TableCell>
-                  <TableCell sx={{textAlign:"center"}}>Mobile Number</TableCell>
-                  <TableCell sx={{textAlign:"center"}}>Global Role</TableCell>
-                  <TableCell sx={{textAlign:"center"}}>Actions</TableCell>
+                  <TableCell align="center">Company ID</TableCell>
+                  <TableCell align="center">Name</TableCell>
+                  <TableCell align="center">Email</TableCell>
+                  <TableCell align="center">Password</TableCell>
+                  <TableCell align="center">Mobile Number</TableCell>
+                  <TableCell align="center">Global Role</TableCell>
+                  <TableCell align="center">Actions</TableCell>
                 </TableRow>
               </TableHead>
-              
+
               <TableBody>
                 {admins.map((admin) => (
                   <TableRow key={admin._id}>
-                    <TableCell>{admin._id}</TableCell>
-                    <TableCell>{admin.name}</TableCell>
-                    <TableCell>{admin.email}</TableCell>
-                    <TableCell>{admin.role}</TableCell>
-                    <TableCell>
-                      <Stack direction="row" spacing={1}>
-                        {/* Edit button */}
-                        <Button
-                          size="small"
-                          variant="outlined"
-                          onClick={() => openEditDialog(admin)}
-                        >
-                          Edit
-                        </Button>
-
-                        {/* Delete button */}
-                        <Button
-                          size="small"
-                          variant="contained"
-                          color="error"
-                          onClick={() => deleteAdmin(admin._id)}
-                        >
-                          Delete
-                        </Button>
+                    <TableCell align="center">{admin._id}</TableCell>
+                    <TableCell align="center">{admin.name}</TableCell>
+                    <TableCell align="center">{admin.email}</TableCell>
+                    <TableCell align="center">{admin.password}</TableCell>
+                    <TableCell align="center">{admin.mobileNumber}</TableCell>
+                    <TableCell align="center">{admin.role}</TableCell>
+                    <TableCell align="center">
+                      <Stack direction="row" spacing={1} justifyContent="center">
+                        <IconButton color="primary" onClick={() => openEditDialog(admin)}>
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton color="error" onClick={() => deleteAdmin(admin._id)}>
+                          <DeleteIcon />
+                        </IconButton>
                       </Stack>
                     </TableCell>
                   </TableRow>
@@ -224,36 +212,38 @@ const AdminDetails = () => {
       </Paper>
 
       {/* Edit Dialog */}
-      <Dialog
-        open={editDialogOpen}
-        onClose={() => setEditDialogOpen(false)}
-        fullWidth
-      >
+      <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)} fullWidth>
         <DialogTitle>Edit Admin</DialogTitle>
         <DialogContent>
           <Stack spacing={2} mt={1}>
             <TextField
               label="Name"
               value={editAdmin.name}
-              onChange={(e) =>
-                setEditAdmin({ ...editAdmin, name: e.target.value })
-              }
+              onChange={(e) => setEditAdmin({ ...editAdmin, name: e.target.value })}
               fullWidth
             />
             <TextField
               label="Email"
               value={editAdmin.email}
-              onChange={(e) =>
-                setEditAdmin({ ...editAdmin, email: e.target.value })
-              }
+              onChange={(e) => setEditAdmin({ ...editAdmin, email: e.target.value })}
               fullWidth
             />
             <TextField
-              label="Role"
+              label="Password"
+              value={editAdmin.password}
+              onChange={(e) => setEditAdmin({ ...editAdmin, password: e.target.value })}
+              fullWidth
+            />
+            <TextField
+              label="Mobile Number"
+              value={editAdmin.mobileNumber}
+              onChange={(e) => setEditAdmin({ ...editAdmin, mobileNumber: e.target.value })}
+              fullWidth
+            />
+            <TextField
+              label="Global Role"
               value={editAdmin.role}
-              onChange={(e) =>
-                setEditAdmin({ ...editAdmin, role: e.target.value })
-              }
+              onChange={(e) => setEditAdmin({ ...editAdmin, role: e.target.value })}
               fullWidth
             />
           </Stack>
@@ -285,3 +275,5 @@ const AdminDetails = () => {
 };
 
 export default AdminDetails;
+
+
